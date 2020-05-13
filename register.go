@@ -53,9 +53,12 @@ func RegisterPool(poolName string, p Pooler, force bool, params ...int) (err err
 		//连接最大空闲时间，超过该时间的连接 将会关闭，可避免空闲时连接EOF，自动失效的问题
 		IdleTimeout: idle * time.Second,
 	}
-	mgoPool, err := NewChannelPool(poolConfig)
+	pool, err := NewChannelPool(poolConfig)
+	if err != nil {
+		return ErrRegisterPool
+	}
 
-	if !pools.add(poolName, mgoPool, force) {
+	if !pools.add(poolName, pool, force) {
 		return ErrRegisterPool
 	}
 	return
